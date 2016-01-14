@@ -13,6 +13,7 @@ public class Dao {
 	private final static String UPDATE_ORDER = "UPDATE demand SET amount = ?, date = ?, WHERE id = ?";
 	private final static String DELETE_ORDER = "DELETE FROM demand WHERE id = ?";
 	private final static String GET_ALL_ORDER = "select * from demand";
+	private final static String GET_ALL_CLIENT = "select * from client";
 	private final static String GET_ORDER_BY_ID = "SELECT * FROM demand WHERE id = ?";
 
 	public void saveOrder(Order order) {
@@ -105,7 +106,7 @@ public class Dao {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-        List<Order> list = new ArrayList<Order>();
+        List<Order> list = new ArrayList<>();
 
         try {
 			conn = ConnectionManager.getConnection();
@@ -122,8 +123,6 @@ public class Dao {
                 list.add(order);
             }
 
-            return list;
-
         } catch (SQLException e) {
             e.printStackTrace();
 		} finally {
@@ -132,4 +131,34 @@ public class Dao {
 
         return list;
     }
+
+	public List<Client> getAllClient() {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Client> list = new ArrayList<>();
+
+		try {
+			conn = ConnectionManager.getConnection();
+			stmt = conn.prepareStatement(GET_ALL_CLIENT);
+			rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				Client client = new Client();
+				client.setId(rs.getInt("id"));
+				client.setNome(rs.getString("name"));
+				client.setPhone(rs.getInt("phone"));
+				client.setAddress(rs.getString("address"));
+
+				list.add(client);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionManager.close(conn, stmt);
+		}
+
+		return list;
+	}
 }

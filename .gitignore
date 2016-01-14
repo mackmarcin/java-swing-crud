@@ -2,3 +2,5 @@
 .idea/*
 # NetBeans
 nbproject/*
+#out file
+out/*

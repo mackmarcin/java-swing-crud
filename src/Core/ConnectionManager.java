@@ -13,11 +13,14 @@ public class ConnectionManager {
 
     public static java.sql.Connection getConnection() {
         java.sql.Connection conn = null;
+
         try {
+            Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 
-            return conn;
-
+//            return conn;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e){
@@ -28,13 +31,17 @@ public class ConnectionManager {
     }
 
     public static void close(java.sql.Connection conn, Statement stmt) {
+
         try {
             if (conn != null) {
                 conn.close();
             }
-            if (stmt != null) {
+            if(stmt != null) {
                 stmt.close();
             }
+
+        } catch (SQLException e){
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
