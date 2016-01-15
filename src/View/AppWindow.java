@@ -2,6 +2,8 @@ package View;
 
 import Model.*;
 import Core.*;
+import com.sun.tools.corba.se.idl.constExpr.Or;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DateFormatter;
@@ -25,8 +27,10 @@ public class AppWindow extends JFrame {
 //	private JTable clientTable;
 //	private JTable table;
 //	private JButton getBtn;
-
+    private JScrollPane orderTabPane;
     private Dao dao;
+    private Order editOrder;
+    private JTable orderTable;
 
     private OrderTableModel orderModel;
     private ClientTableModel clientModel;
@@ -52,7 +56,7 @@ public class AppWindow extends JFrame {
 		setTitle("Company order App");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(50, 50, 800, 600);
-        JTable orderTable = new JTable();
+        orderTable = new JTable();
         JTable clientTable = new JTable();
         clientTable.setRowSelectionAllowed(false);
         clientTable.setCellSelectionEnabled(false);
@@ -63,37 +67,36 @@ public class AppWindow extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-        JScrollPane orderTabPane = new JScrollPane();
+        orderTabPane = new JScrollPane();
         orderTabPane.setPreferredSize(new Dimension(190,400));
         orderTabPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        orderTabPane.setBackground(Color.BLUE);
         contentPane.add(orderTabPane, BorderLayout.WEST);
 
         JScrollPane clientTabPane = new JScrollPane();
         clientTabPane.setPreferredSize(new Dimension(190,400));
         orderTabPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        clientTabPane.setBackground(Color.RED);
         contentPane.add(clientTabPane, BorderLayout.CENTER);
 
         JButton add = new JButton();
-        add.setText("Dodaj");
+        add.setText("Zapisz");
         JButton edit = new JButton();
         edit.setText("Edytuj");
         JButton remove = new JButton();
         remove.setText("Usuń");
+        JButton clear = new JButton();
+        clear.setText("Wyczyść");
         JPanel buttonPane = new JPanel();
         buttonPane.setPreferredSize(new Dimension(790,90));
         orderTabPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        buttonPane.setBackground(Color.GREEN);
         contentPane.add(buttonPane, BorderLayout.SOUTH);
         buttonPane.add(add, BorderLayout.CENTER);
         buttonPane.add(edit, BorderLayout.CENTER);
         buttonPane.add(remove, BorderLayout.CENTER);
+        buttonPane.add(clear, BorderLayout.CENTER);
 
         JPanel formPanel = new JPanel(new GridLayout(10,2));
         formPanel.setPreferredSize(new Dimension(400,500));
         formPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        clientTabPane.setBackground(Color.YELLOW);
         contentPane.add(formPanel, BorderLayout.EAST);
 
         JTextField amountField = new JTextField();
@@ -101,7 +104,7 @@ public class AppWindow extends JFrame {
         JLabel amountLabel = new JLabel("Wartość");
         amountLabel.setLabelFor(amountField);
 
-        DateFormat format = new SimpleDateFormat("dd-mm-yyyy");
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         DateFormatter df = new DateFormatter(format);
         JFormattedTextField dateField = new JFormattedTextField(df);
 
@@ -119,6 +122,7 @@ public class AppWindow extends JFrame {
             List<Client> clients = dao.getAllClient();
             orderModel = new OrderTableModel(orders);
             orderTable.setModel(orderModel);
+            orderTable.setShowVerticalLines(true);
             clientModel = new ClientTableModel(clients);
             clientTable.setModel(clientModel);
 
@@ -137,13 +141,80 @@ public class AppWindow extends JFrame {
 
                 try {
                     Integer rowId = orderTable.getSelectedRow();
-                    Integer value = (Integer) orderModel.getValueAt(rowId, 0);
+                    Order order = orderModel.getRowEntity(rowId);
 
-                    JOptionPane.showMessageDialog(null, "thank you for using java " + value);
+                    dao.removeOrder(order);
+                    orderModel.removeRow(rowId);
+                    orderModel.fireTableDataChanged();
 
-                    ///tutaj dodamy akcje
-                    ///trzeba zrefaktorowac ten kod bo jest bajzel
+//                    JOptionPane.showMessageDialog(null, "dupa ");
 
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+
+        clear.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    dateField.setValue(null);
+                    amountField.setText("");
+                    orderTable.clearSelection();
+                    editOrder = null;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+
+        edit.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Integer rowId = orderTable.getSelectedRow();
+                    editOrder = orderModel.getRowEntity(rowId);
+
+                    dateField.setValue(editOrder.getDate());
+                    amountField.setText(editOrder.getAmount().toString());
+
+//                    JOptionPane.showMessageDialog(null, "dupa ");
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+
+        add.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    if ( editOrder != null ) {
+                        editOrder.setAmount(Float.parseFloat(amountField.getText()));
+                        editOrder.setDate((Date)dateField.getValue());
+                        dao.saveOrder(editOrder);
+                        orderModel.updateRow();
+                        dateField.setValue(null);
+                        amountField.setText("");
+                        orderTable.clearSelection();
+                        editOrder = null;
+                    } else {
+                        Order order = new Order();
+                        order.setAmount(Float.parseFloat(amountField.getText()));
+                        order.setDate((Date)dateField.getValue());
+                        dao.saveOrder(order);
+                        Order last = dao.findLast();
+                        orderModel.addRow(last);
+                        dateField.setValue(null);
+                        amountField.setText("");
+                    }
 
                 } catch (Exception ex) {
                     ex.printStackTrace();

@@ -29,7 +29,16 @@ class OrderTableModel extends AbstractTableModel {
 		return orders.size();
 	}
 
-	@Override
+    public Order getRowEntity(int row)
+    {
+        return orders.get(row);
+    }
+
+    public void removeRow(int row) {
+        orders.remove(row);
+    }
+
+    @Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
@@ -57,6 +66,17 @@ class OrderTableModel extends AbstractTableModel {
 	public Class getColumnClass(int c) {
 
 		return getValueAt(0, c).getClass();
+	}
+
+	public void addRow(Order rowData) {
+		int row = orders.size();
+		orders.add(rowData);
+		fireTableRowsInserted(row, row);
+	}
+
+	public void updateRow() {
+		int row = orders.size();
+		fireTableRowsUpdated(0,row);
 	}
 
 }

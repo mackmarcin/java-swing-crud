@@ -26,9 +26,9 @@ DROP TABLE IF EXISTS `demand`;
 
 CREATE TABLE `demand` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` int(10) unsigned NOT NULL,
+  `client_id` int(10) unsigned DEFAULT NULL,
   `amount` float(6,2) DEFAULT NULL,
-  `date` date NOT NULL,
+  `date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `demands_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `client`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
