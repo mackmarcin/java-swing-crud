@@ -16,6 +16,7 @@ public class Dao {
 	private final static String GET_LAST_ORDER = "SELECT * FROM demand ORDER BY id DESC LIMIT 1";
 	private final static String GET_ALL_CLIENT = "SELECT * FROM client";
 	private final static String GET_ORDER_BY_ID = "SELECT * FROM demand WHERE id = ?";
+	private final static String GET_CLIENT_BY_ID = "SELECT * FROM client WHERE id = ?";
 
 	public void saveOrder(Order order) {
 		Connection conn = null;
@@ -97,6 +98,37 @@ public class Dao {
 		}
 
 		return order;
+	}
+
+
+	public Client findClientById(Integer id) {
+
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Client client = null;
+
+		try {
+			conn = ConnectionManager.getConnection();
+			stmt = conn.prepareStatement(GET_CLIENT_BY_ID);
+			stmt.setInt(1, id);
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				client = new Client();
+				client.setId(rs.getInt("id"));
+				client.setNome(rs.getString("name"));
+				client.setPhone(rs.getInt("phone"));
+				client.setAddress(rs.getString("address"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionManager.close(conn, stmt);
+		}
+
+		return client;
 	}
 
 	public Order findOrderById(Integer id) {

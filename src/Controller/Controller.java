@@ -1,44 +1,68 @@
 package Controller;
 
+import Core.Dao;
+import Model.Client;
+import Model.ClientTableModel;
+import Model.Order;
+import Model.OrderTableModel;
+import View.AppWindow;
 
-        import java.util.List;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
-        import mvc.model.Klient;
-        import mvc.repository.KlientRepo;
-        import mvc.view.KlientView;
+public class Controller {
 
-public class KlientController {
+    private AppWindow view;
+    private Dao dao;
 
-    private KlientRepo model;
-    private KlientView view;
-
-    public KlientController(KlientRepo model, KlientView view) {
-        this.model = model;
-        this.view = view;
-
-        view.setController(this);
-
-        refreshKlienci();
+    public Controller() {
+        dao = new Dao();
     }
 
-    public void insertKlient(Klient klient) {
-        model.insertKlient(klient);
-        refreshKlienci();
+    public OrderTableModel setOrderData(JTable table) {
+
+        OrderTableModel orderModel = null;
+
+        try {
+            List<Order> orders = dao.getAllOrder();
+            orderModel = new OrderTableModel(orders);
+            table.setModel(orderModel);
+            table.setShowVerticalLines(true);
+        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this, "DAO Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
+        return orderModel;
     }
 
-    public void updateKlient(Klient klient) {
-        model.updateKlient(klient);
-        refreshKlienci();
+    public ClientTableModel setClientData(JTable table) {
+
+        ClientTableModel clientModel = null;
+
+        try {
+            List<Client> clients = dao.getAllClient();
+            clientModel = new ClientTableModel(clients);
+            table.setModel(clientModel);
+        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this, "DAO Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
+        return clientModel;
     }
 
-    public void deleteKlient(Integer klientId) {
-        model.deleteKlient(klientId);
-        refreshKlienci();
+    public void setClientList(JComboBox<Client> clientList) {
+
+        List<Client> clients = dao.getAllClient();
+
+        for (Client client : clients) {
+            clientList.addItem(client);
+        }
     }
 
-    private void refreshKlienci() {
-        List<Klient> klienci = model.getKlienci();
-        view.refreshKlienci(klienci);
+    public void setView(AppWindow appWindow) {
+        this.view = appWindow;
     }
 }
-

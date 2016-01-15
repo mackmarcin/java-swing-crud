@@ -38,4 +38,8 @@ public class Client {
     public void setPhone(Integer phone) {
         this.phone = phone;
     }
+
+    public String toString() {
+        return this.getNome();
+    }
 }

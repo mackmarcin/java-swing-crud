@@ -1,6 +1,5 @@
-package View;
+package Model;
 
-import Model.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
@@ -9,9 +8,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
-class OrderTableModel extends AbstractTableModel {
+public class OrderTableModel extends AbstractTableModel {
 
-	private String[] columnNames = { "id", "client", "amount", "date" };
+	private String[] columnNames = { "client", "amount", "date" };
 	private List<Order> orders;
 
 	public OrderTableModel(List<Order> orderList) {
@@ -50,12 +49,10 @@ class OrderTableModel extends AbstractTableModel {
 
         switch (col) {
             case 0:
-                return order.getId();
-            case 1:
                 return order.getClient();
-            case 2:
+            case 1:
                 return order.getAmount();
-            case 3:
+            case 2:
                 return order.getDate();
             default:
                 return null;

@@ -1,11 +1,9 @@
-package View;
-
-import Model.Client;
+package Model;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-class ClientTableModel extends AbstractTableModel {
+public class ClientTableModel extends AbstractTableModel {
 
 	private String[] columnNames = { "id", "name", "phone", "address" };
 	private List<Client> clients;
