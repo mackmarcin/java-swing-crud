@@ -85,6 +85,8 @@ public class AppWindow extends JFrame {
         remove.setText("Usuń");
         JButton clear = new JButton();
         clear.setText("Wyczyść");
+        JButton select = new JButton();
+        select.setText("Wybierz");
         JPanel buttonPane = new JPanel();
         buttonPane.setPreferredSize(new Dimension(790,90));
         orderTabPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -93,6 +95,7 @@ public class AppWindow extends JFrame {
         buttonPane.add(edit, BorderLayout.CENTER);
         buttonPane.add(remove, BorderLayout.CENTER);
         buttonPane.add(clear, BorderLayout.CENTER);
+        buttonPane.add(select, BorderLayout.CENTER);
 
         JPanel formPanel = new JPanel(new GridLayout(10,2));
         formPanel.setPreferredSize(new Dimension(400,500));

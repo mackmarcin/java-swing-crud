@@ -9,7 +9,7 @@ public class ConnectionManager {
     private static final String DATABASE = "company";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/" + DATABASE;
     private static final String USER = "root";
-    private static final String PASSWORD = "mysql";
+    private static final String PASSWORD = "root";
 
     public static java.sql.Connection getConnection() {
         java.sql.Connection conn = null;
